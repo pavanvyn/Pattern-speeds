@@ -2,14 +2,18 @@ set term pngcairo
 
 set output "speed_var.png"
 
+dt = 1.5*0.025
+omg_fac = -3.2
+i = pi/6
+
 set title "Pattern speed variation with time (snapshot)"
-unset key
-set yrange [0:-8]
-set xlabel "Snapshot number"
-set ylabel "Pattern speed ((km/s)/px)"
+set yrange [0:50]
+set xrange [0:2.2]
+set xlabel "Evolution time (Gyr)"
+set ylabel "Pattern speed ((km/s)/kpc)"
 
 f(x) = m*x + c
-fit f(x) "speed_var.dat" u 1:($3<=0.5 ? $2 : 1/0):3 yerrors via m,c
-plot "speed_var.dat" u 1:($3<=0.5 ? $2 : 1/0):3 w yerrorbars pt 7 ps 1 lc "#00ff00",f(x) lw 2 lc "#00ff00"
+fit f(x) "speed_var.dat" u ($1*dt):($3<=0.5 ? $2*omg_fac/sin(i) : 1/0):(-$3*omg_fac/sin(i)) yerrors via m,c
+plot "speed_var.dat" u ($1*dt):($3<=0.5 ? $2*omg_fac/sin(i) : 1/0):(-$3*omg_fac/sin(i)) w yerrorbars pt 7 ps 1 lc "medium-blue" title "Slits -15 to 15 masked",f(x) lw 2 lc "medium-blue" title ""
 
 set term wxt
